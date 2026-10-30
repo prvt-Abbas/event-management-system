@@ -67,7 +67,7 @@ pipeline {
                 // app + MySQL + monitoring on one node.
                 sh '''
                     if ! minikube status --format='{{.Host}}' 2>/dev/null | grep -q Running; then
-                      minikube start --driver=docker --cpus=2 --memory=4096
+                      minikube start --driver=docker --cpus=2 --memory=3072
                     else
                       echo "Minikube already running"
                     fi
