@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-app
+  labels:
+    app: event-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: event-app
+  template:
+    metadata:
+      labels:
+        app: event-app
+    spec:
+      containers:
+        - name: event-app
+          image: event-app:latest
+          # Never: the image is loaded into Minikube by the Jenkinsfile
+          # (minikube image load). "Always"/"IfNotPresent" would make
+          # Kubernetes try to pull event-app:latest from Docker Hub,
+          # where it does not exist.
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: "5000"
+            - name: DB_HOST
+              value: mysql
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: event_db
+            - name: DB_USER
+              value: root
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-password
+          # /api/health does not need the DB, so it proves the app
+          # process is up. Login (in the Jenkins Verify stage) is the
+          # separate check that proves DB + seed data are up.
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
