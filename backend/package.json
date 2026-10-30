@@ -1,0 +1,1 @@
+{"dependencies":{"bcryptjs":"^2.4.3","cors":"^2.8.5","dotenv":"^16.4.5","express":"^4.19.2","mysql2":"^3.10.1"},"description":"Event Management System - Application Tier (Node.js + Express + MySQL)","main":"server.js","name":"event-backend","scripts":{"check":"node check.js","dev":"node --watch server.js","setup":"node setup.js","start":"node server.js"},"version":"1.0.0"}

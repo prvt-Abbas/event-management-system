@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Management System</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ AUTH SCREEN: Login + Registration forms ============ -->
+<section id="authScreen" class="auth-wrap">
+  <div class="auth-card">
+    <h1>🎉 EventHub</h1>
+    <p class="muted">Discover, create and manage events — all in one place.</p>
+    <p id="connStatus" class="muted small">Checking backend…</p>
+
+    <div class="auth-tabs">
+      <button id="tabLoginBtn" class="active" onclick="showAuth('login')">Log In</button>
+      <button id="tabRegisterBtn" onclick="showAuth('register')">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" onsubmit="doLogin(event)">
+      <label>Email</label>
+      <input id="loginEmail" type="email" placeholder="you@example.com" required>
+      <label>Password</label>
+      <input id="loginPassword" type="password" placeholder="Your password" required>
+      <button class="primary wide" type="submit">Log In</button>
+      <p class="muted small">Demo: admin@events.com / admin123 &nbsp;·&nbsp; organizer@events.com / organizer123 &nbsp;·&nbsp; user@events.com / user123</p>
+      <p><button type="button" onclick="fillDemo('admin@events.com','admin123')">Fill admin demo</button>
+         <button type="button" onclick="fillDemo('user@events.com','user123')">Fill attendee demo</button></p>
+    </form>
+
+    <!-- REGISTRATION FORM -->
+    <form id="registerForm" class="hidden" onsubmit="doRegister(event)">
+      <label>Full Name</label>
+      <input id="regName" type="text" placeholder="Your full name" required>
+      <label>Email</label>
+      <input id="regEmail" type="email" placeholder="you@example.com" required>
+      <label>Phone (optional)</label>
+      <input id="regPhone" type="tel" placeholder="03xx-xxxxxxx">
+      <label>I am registering as</label>
+      <select id="regRole">
+        <option value="attendee">Attendee — I want to join events</option>
+        <option value="organizer">Organizer — I want to create events</option>
+      </select>
+      <label>Password (min 6 characters)</label>
+      <input id="regPassword" type="password" placeholder="Choose a password" required>
+      <label>Confirm Password</label>
+      <input id="regConfirm" type="password" placeholder="Repeat your password" required>
+      <button class="primary wide" type="submit">Create Account</button>
+      <p class="muted small">Already have an account? <a href="#" onclick="showAuth('login');return false;">Log in</a></p>
+    </form>
+    <p id="authMsg" class="msg"></p>
+  </div>
+</section>
+
+<!-- ============ MAIN APP (shown after login) ============ -->
+<section id="appScreen" class="hidden">
+  <header>
+    <h1>🎉 EventHub</h1>
+    <div>
+      <span id="userInfo"></span>
+      <button onclick="logout()">Log Out</button>
+    </div>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button>
+    <button class="nav-btn" data-tab="events" onclick="showTab('events')">Events</button>
+    <button class="nav-btn" data-tab="myregs" onclick="showTab('myregs')">My Registrations</button>
+    <button class="nav-btn" data-tab="create" onclick="showTab('create')">Create Event</button>
+  </nav>
+  <p id="appMsg" class="msg"></p>
+
+  <!-- Dashboard -->
+  <div id="tab-dashboard" class="tab active">
+    <h2>Dashboard</h2>
+    <div id="stats" class="stats"></div>
+    <h3>Upcoming Events</h3>
+    <div id="upcomingList" class="grid"></div>
+  </div>
+
+  <!-- Events -->
+  <div id="tab-events" class="tab">
+    <h2>Browse Events</h2>
+    <div class="filters">
+      <input id="searchInput" type="text" placeholder="Search events or venue…" oninput="renderEvents()">
+      <div id="categoryFilters"></div>
+    </div>
+    <div id="eventGrid" class="grid"></div>
+  </div>
+
+  <!-- My Registrations -->
+  <div id="tab-myregs" class="tab">
+    <h2>My Registrations</h2>
+    <div id="myRegList" class="grid"></div>
+  </div>
+
+  <!-- Create Event -->
+  <div id="tab-create" class="tab">
+    <h2>Create a New Event</h2>
+    <p id="createNote" class="muted"></p>
+    <form id="createForm" onsubmit="createEvent(event)">
+      <label>Event Title</label>
+      <input id="evTitle" required placeholder="e.g. Tech Meetup 2026">
+      <label>Category</label>
+      <select id="evCategory"></select>
+      <label>Venue</label>
+      <input id="evVenue" required placeholder="e.g. Karachi Expo Centre">
+      <label>Date &amp; Time</label>
+      <input id="evDate" type="datetime-local" required>
+      <label>Capacity (seats)</label>
+      <input id="evCapacity" type="number" min="1" value="100" required>
+      <label>Ticket Price (Rs, 0 = free)</label>
+      <input id="evPrice" type="number" min="0" step="0.01" value="0" required>
+      <label>Description</label>
+      <textarea id="evDesc" rows="3" placeholder="What is this event about?"></textarea>
+      <button class="primary" type="submit">Create Event</button>
+    </form>
+  </div>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
