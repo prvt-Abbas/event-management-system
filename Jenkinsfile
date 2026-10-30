@@ -60,21 +60,15 @@ pipeline {
             }
         }
 
-        stage('Start Minikube (single node)') {
-            steps {
-                // Idempotent: if Minikube is already running this is a no-op.
-                // --driver=docker, 2 CPUs / 4 GB is the floor for
-                // app + MySQL + monitoring on one node.
-                sh '''
-                    if ! minikube status --format='{{.Host}}' 2>/dev/null | grep -q Running; then
-                      minikube start --driver=docker --cpus=2 --memory=3072
-                    else
-                      echo "Minikube already running"
-                    fi
-                    kubectl get nodes
-                '''
-            }
-        }
+        if ! kubectl get nodes >/dev/null 2>&1; then
+  echo "Minikube not responding, recreating it"
+  minikube delete || true
+  minikube start --driver=docker --cpus=2 --memory=3072
+else
+  echo "Minikube already running and responding"
+fi
+kubectl get nodes
+
 
         stage('Deploy to Kubernetes') {
             steps {
