@@ -60,16 +60,20 @@ pipeline {
             }
         }
 
-        if ! kubectl get nodes >/dev/null 2>&1; then
-  echo "Minikube not responding, recreating it"
-  minikube delete || true
-  minikube start --driver=docker --cpus=2 --memory=3072
-else
-  echo "Minikube already running and responding"
-fi
-kubectl get nodes
-
-
+       stage('Start Minikube (single node)') {
+    steps {
+        sh '''
+            if ! kubectl get nodes >/dev/null 2>&1; then
+              echo "Minikube not responding, recreating it"
+              minikube delete || true
+              minikube start --driver=docker --cpus=2 --memory=3072
+            else
+              echo "Minikube already running and responding"
+            fi
+            kubectl get nodes
+        '''
+    }
+}
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
